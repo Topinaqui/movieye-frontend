@@ -1,36 +1,57 @@
 import React, { Component } from "react";
+import { Link, withRouter } from "react-router-dom";
 
 import axios from "axios";
 
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import {
+  withStyles
+} from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
 
-class MoviesList extends Component {
-  apiFetcher() {
-    console.log("Vai chamar a API");
+import SEARCH_RESULT from "./resources/listFack";
 
+
+class MoviesList extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+    this.state.SEARCH_RESULT = SEARCH_RESULT;
+
+    console.log("Resultado");
+    console.log(SEARCH_RESULT);
+  }
+
+  apiFetcher() {
     let form = new FormData();
     form.set("query", "Rambo");
 
-    const http = axios.create({
-      baseURL: "http://localhost:8000/api",
-      headers: { "Access-Control-Allow-Origin": "*" }
-    });
+    // const http = axios.create({
+    //   baseURL: "http://localhost:8000/api",
+    //   headers: { "Access-Control-Allow-Origin": "*" }
+    // });
 
-    http
-      .get("/search", {
-        query: "Rambo"
-      })
-      .then(({ data }) => {
-        console.log(data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    // http
+    //   .get("/search", {
+    //     query: "Rambo"
+    //   })
+    //   .then(({ data }) => {
+    //     console.log(data);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   });
+  }
+
+  showMovieDetails(movieID) {
+    const { history } = this.props;
+
+    history.push(`/details/${movieID}`);
+
   }
 
   componentDidMount() {
@@ -38,29 +59,14 @@ class MoviesList extends Component {
   }
 
   render() {
+    const { results } = SEARCH_RESULT;
     const { classes } = this.props;
-    return (
-      <List className={classes.root}>
-        <ListItem alignItems="flex-start">
-          <ListItemText
-            primary="Title"
-            secondary={
-              <React.Fragment>
-                <Typography
-                  component="span"
-                  className={classes.inline}
-                  color="textPrimary"
-                >
-                  {" "}
-                  Sinopse{" "}
-                </Typography>{" "}
-                {" Movie Sinopse... ... ..."}{" "}
-              </React.Fragment>
-            }
-          />{" "}
-        </ListItem>
-      </List>
-    );
+
+    return (<List className={classes.root}>
+      {results.map((movie) => <ListItem key={movie.id} onClick={event => this.showMovieDetails(movie.id)}>
+        <ListItemText primary={movie.title} secondary={movie.overview} />
+      </ListItem>)}
+    </List>);
   }
 }
 
@@ -79,4 +85,4 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(MoviesList);
+export default withRouter(withStyles(styles)(MoviesList));
