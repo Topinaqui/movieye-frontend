@@ -1,14 +1,11 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
-
-import axios from "axios";
+import { withRouter } from "react-router-dom";
 
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
 
 class MoviesList extends Component {
   onClickHandler(movieID) {
@@ -25,10 +22,14 @@ class MoviesList extends Component {
       <List className={classes.root}>
         {list.map(movie => (
           <ListItem
+            className={classes.item}
             key={movie.id}
             onClick={event => this.onClickHandler(movie.id)}
           >
-            <ListItemText primary={movie.title} secondary={movie.overview} />
+            <ListItemText
+              primary={movie.title}
+              secondary={`Release date: ${movie.release_date}`}
+            />
           </ListItem>
         ))}
       </List>
@@ -46,6 +47,9 @@ const styles = theme => ({
     width: "100%",
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper
+  },
+  item: {
+    cursor: "pointer"
   },
   inline: {
     display: "inline"
