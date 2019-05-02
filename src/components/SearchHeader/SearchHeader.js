@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 
 import { withStyles } from "@material-ui/core/styles";
 import { fade } from "@material-ui/core/styles/colorManipulator";
@@ -10,7 +9,45 @@ import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 
+import { search } from "../../services/MovieyeServices";
+
 class Header extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+    this.state.searchQuery = "";
+  }
+
+  async searchMovies(query = null) {
+    if (!query) return;
+
+    let searchResult = await search(query);
+
+    this.handleSearch(searchResult);
+  }
+
+  setSearchQuery({ value }) {
+    this.setState({ searchQuery: value });
+  }
+
+  ifEnterTriggerSearch(key) {
+    if (key === "Enter") {
+      const { searchQuery } = this.state;
+
+      this.searchMovies(searchQuery);
+    }
+  }
+
+  handleSearch(searchResult) {
+    const { searchHandler } = this.props;
+
+    return (
+      (typeof searchHandler === "function" && searchHandler(searchResult)) ||
+      searchResult
+    );
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -29,11 +66,14 @@ class Header extends Component {
               <SearchIcon />
             </div>
             <InputBase
+              autoComplete="on"
               placeholder="Search movies"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput
               }}
+              onChange={({ target }) => this.setSearchQuery(target)}
+              onKeyPress={({ key }) => this.ifEnterTriggerSearch(key)}
             />
           </div>
           <div className={classes.grow} />

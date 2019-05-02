@@ -1,35 +1,70 @@
-import React, {
-  Component
-} from "react";
-import {
-  Link
-} from "react-router-dom";
+import React, { Component } from "react";
 
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import { Link } from "react-router-dom";
 
-class Detail extends Component {
+import { details } from "../../services/MovieyeServices";
+
+class Details extends Component {
   constructor(props) {
     super(props);
 
     this.state = {};
     this.state.movieID = null;
+    this.state.movieDetails = {};
   }
 
-  openMovieDetails(movieID) {
+  async searchDetails(movieID) {
+    let movieDetails = await details(movieID);
+
+    console.log(movieDetails);
+
+    return movieDetails;
+  }
+
+  showMovieDetails(movieDetails) {
+    this.setState({ movieDetails });
+  }
+
+  setMovieID(movieID) {
     this.setState({ movieID });
-    console.log("OpenDetails: ", movieID);
   }
 
   componentDidMount() {
-    const {
-      match
-    } = this.props;
+    const { match } = this.props;
 
-    this.openMovieDetails(match.params.id);
+    this.setMovieID(match.params.id);
+
+    this.showMovieDetails(this.searchDetails(match.params.id));
   }
 
   render() {
-    return (<p> building... {this.state.movieID}</p>);
+    const { classes } = this.props;
+    const { movieDetails } = this.state;
+
+    return <p>{movieDetails.original_title || "Not found?"}</p>;
   }
 }
 
-export default Detail;
+const styles = {
+  card: {
+    maxWidth: 345
+  },
+  media: {
+    height: 140
+  }
+};
+
+Details.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default withStyles(styles)(Details);
