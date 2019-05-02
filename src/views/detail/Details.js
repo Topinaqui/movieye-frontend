@@ -25,32 +25,28 @@ class Details extends Component {
   async searchDetails(movieID) {
     let movieDetails = await details(movieID);
 
-    console.log(movieDetails);
+    this.setState({ movieDetails });
 
     return movieDetails;
-  }
-
-  showMovieDetails(movieDetails) {
-    this.setState({ movieDetails });
   }
 
   setMovieID(movieID) {
     this.setState({ movieID });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     const { match } = this.props;
 
     this.setMovieID(match.params.id);
 
-    this.showMovieDetails(this.searchDetails(match.params.id));
+    this.searchDetails(match.params.id);
   }
 
   render() {
     const { classes } = this.props;
     const { movieDetails } = this.state;
 
-    return <p>{movieDetails.original_title || "Not found?"}</p>;
+    return <p>{movieDetails ? movieDetails.original_title : "Not found?"}</p>;
   }
 }
 
